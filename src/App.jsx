@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import { Link, Route, Routes } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link, Route, Routes } from 'react-router-dom';
 
-import SearchCamp from "./pages/SearchComp";
-import EventComp from "./pages/EventComp";
-import InfoComp from "./pages/InfoComp";
-import EduComp from "./pages/EduComp";
-import HomeComp from "./pages/HomeComp";
-import SeatInfoComp from "./pages/info/SeatInfoComp";
-import OperatingHoursComp from "./pages/info/OperatingHoursComp";
-import MemberGuideComp from "./pages/info/MemberGuideComp";
-import MaterialGuideComp from "./pages/info/MaterialGuideComp";
-import SeoulLibraryComp from "./pages/info/SeoulLibraryComp";
+import SearchCamp from './pages/SearchComp';
+import EventComp from './pages/EventComp';
+import InfoComp from './pages/InfoComp';
+import EduComp from './pages/EduComp';
+import HomeComp from './pages/HomeComp';
+import SeatInfoComp from './pages/info/SeatInfoComp';
+import OperatingHoursComp from './pages/info/OperatingHoursComp';
+import MemberGuideComp from './pages/info/MemberGuideComp';
+import MaterialGuideComp from './pages/info/MaterialGuideComp';
+import SeoulLibraryComp from './pages/info/SeoulLibraryComp';
 
 function App() {
   const [isInfoDropdownOpen, setIsInfoDropdownOpen] = useState(false);
@@ -18,7 +18,7 @@ function App() {
   return (
     <>
       <div className="container-fluid  relative px-6 py-6">
-        <nav className="absolute right-0 z-10 hidden">
+        <nav className="absolute left-0 z-10 ">
           <ul className="flex justify-center items-center gap-4">
             <li>
               <Link to="/">Home</Link>
