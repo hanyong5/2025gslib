@@ -24,11 +24,30 @@ function SearchComp() {
     setError(null);
 
     try {
-      const response = await fetch(
-        `/api/keyword_book_search?keyword=${encodeURIComponent(
+      // 환경에 따른 API URL 설정
+      const isProduction = import.meta.env.PROD;
+      let apiUrl;
+
+      if (isProduction) {
+        // 프로덕션: Netlify Functions 사용
+        apiUrl = `/.netlify/functions/book-search?keyword=${encodeURIComponent(
           keyword
-        )}&pageNum=${pageNum}`
-      );
+        )}&pageNum=${pageNum}`;
+      } else {
+        // 개발: Vite 프록시 사용
+        apiUrl = `/api/keyword_book_search?keyword=${encodeURIComponent(
+          keyword
+        )}&pageNum=${pageNum}`;
+      }
+
+      console.log("API 요청 URL:", apiUrl); // 디버깅용
+
+      const response = await fetch(apiUrl, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      });
 
       if (!response.ok) {
         throw new Error("검색 요청에 실패했습니다.");
@@ -64,7 +83,10 @@ function SearchComp() {
     } catch (err) {
       let errorMessage = "검색 중 오류가 발생했습니다.";
 
-      if (err instanceof SyntaxError && err.message.includes("JSON")) {
+      if (err.name === "TypeError" && err.message.includes("Failed to fetch")) {
+        errorMessage =
+          "네트워크 연결에 문제가 있습니다. 인터넷 연결을 확인하고 다시 시도해주세요.";
+      } else if (err instanceof SyntaxError && err.message.includes("JSON")) {
         errorMessage =
           "서버 응답 형식이 올바르지 않습니다. 잠시 후 다시 시도해주세요.";
       } else if (err.message) {
@@ -72,6 +94,8 @@ function SearchComp() {
       }
 
       console.error("검색 에러:", err);
+      console.error("에러 타입:", err.name);
+      console.error("에러 메시지:", err.message);
       setError(errorMessage);
       setSearchResults(null);
     } finally {

@@ -1,12 +1,18 @@
 [build]
   command = "npm run build"
-  publish = "dist" # Vite는 기본적으로 dist 폴더를 생성
-
-
-
-
+  publish = "dist"
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "/api/*"
+  to = "/.netlify/functions/book-search"
   status = 200
+
+[functions]
+  directory = "netlify/functions"
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Content-Type"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
