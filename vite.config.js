@@ -8,9 +8,26 @@ export default defineConfig({
   build: {
     outDir: "dist",
     assetsDir: "assets",
+    cssCodeSplit: false, // CSS를 하나의 파일로 번들링
     rollupOptions: {
       output: {
         manualChunks: undefined,
+        // 안드로이드 웹뷰 호환성을 위한 설정
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name && assetInfo.name.endsWith(".css")) {
+            return "assets/[name]-[hash][extname]";
+          }
+          return "assets/[name]-[hash][extname]";
+        },
+      },
+    },
+    // 안드로이드 웹뷰 호환성을 위한 설정
+    target: "es2015",
+    minify: "terser",
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
       },
     },
   },

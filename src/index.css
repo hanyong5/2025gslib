@@ -1,15 +1,36 @@
 @import "tailwindcss";
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 
+/* 안드로이드 웹뷰 호환성을 위한 기본 스타일 */
 * {
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui,
     Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR",
     "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
     sans-serif;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 안드로이드 웹뷰에서 폰트 렌더링 최적화 */
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
 }
 
 .title {
   position: relative;
+  -webkit-transform: translateZ(0); /* 하드웨어 가속 활성화 */
+  transform: translateZ(0);
 }
 .title:after {
   content: "";
@@ -17,10 +38,46 @@
   left: -45px;
   width: 40px;
   height: 40px;
-
   background-image: url(../images/icon01.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  -webkit-transform: translateZ(0); /* 하드웨어 가속 활성화 */
+  transform: translateZ(0);
 }
 
 .todayView {
   background-color: rgb(251, 236, 245);
+  -webkit-transform: translateZ(0); /* 하드웨어 가속 활성화 */
+  transform: translateZ(0);
+}
+
+/* 안드로이드 웹뷰에서 터치 이벤트 최적화 */
+button,
+a,
+[role="button"] {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* 안드로이드 웹뷰에서 스크롤 최적화 */
+.scroll-container {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+}
+
+/* 안드로이드 웹뷰에서 이미지 최적화 */
+img {
+  max-width: 100%;
+  height: auto;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
 }

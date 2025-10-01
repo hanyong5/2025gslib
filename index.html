@@ -2,16 +2,46 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta
+      name="format-detection"
+      content="telephone=no"
+    />
+    <meta
+      name="msapplication-tap-highlight"
+      content="no"
+    />
+    <meta
+      name="apple-mobile-web-app-capable"
+      content="yes"
+    />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
     <title>gangseo</title>
+
+    <!-- CSS 파일 명시적 로드 -->
+    <link
+      rel="stylesheet"
+      href="/src/index.css"
+    />
+
     <style>
       html,
       body {
         height: 100vh;
+        margin: 0;
+        padding: 0;
+        -webkit-text-size-adjust: 100%;
+        -webkit-tap-highlight-color: transparent;
       }
       #root {
         height: 100vh;
+        width: 100%;
       }
 
       body {
@@ -19,11 +49,41 @@
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+
+      /* 안드로이드 웹뷰 호환성을 위한 추가 스타일 */
+      * {
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+
+      /* 터치 이벤트 최적화 */
+      * {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      /* 입력 필드는 선택 가능하도록 */
+      input,
+      textarea {
+        -webkit-user-select: text;
+        -khtml-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
       }
     </style>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <script
+      type="module"
+      src="/src/main.jsx"
+    ></script>
   </body>
 </html>
