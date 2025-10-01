@@ -1,2 +1,5 @@
 # API 프록시 설정
 /api/* http://101.55.20.4:8000/:splat 200
+
+# SPA 라우팅을 위한 catch-all 리다이렉트 (모든 경로를 index.html로)
+/* /index.html 200

@@ -2,9 +2,16 @@
   command = "npm run build"
   publish = "dist"
 
+# API 프록시 설정
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/book-search"
+  status = 200
+
+# SPA 라우팅을 위한 catch-all 리다이렉트 (마지막에 위치해야 함)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
   status = 200
 
 [functions]
