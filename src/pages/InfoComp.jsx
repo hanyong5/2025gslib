@@ -3,7 +3,7 @@ import React from "react";
 function InfoComp() {
   return (
     <div className="container m-auto px-6">
-      <h1 className="text-[56px] font-bold mb-8">정보</h1>
+      <h1 className="text-[56px] font-bold mb-8">도서관 안내</h1>
       <div className="container">
         <a href="/info/seat">
           <div className="bg-amber-200 p-4 rounded-lg">
@@ -16,8 +16,6 @@ function InfoComp() {
           </div>
         </a>
       </div>
-      
-     
     </div>
   );
 }

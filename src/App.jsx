@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { Link, Route, Routes } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, Route, Routes } from "react-router-dom";
 
-import SearchCamp from './pages/SearchComp';
-import EventComp from './pages/EventComp';
-import InfoComp from './pages/InfoComp';
-import EduComp from './pages/EduComp';
-import HomeComp from './pages/HomeComp';
-import SeatInfoComp from './pages/info/SeatInfoComp';
-import OperatingHoursComp from './pages/info/OperatingHoursComp';
-import MemberGuideComp from './pages/info/MemberGuideComp';
-import MaterialGuideComp from './pages/info/MaterialGuideComp';
-import SeoulLibraryComp from './pages/info/SeoulLibraryComp';
+import SearchCamp from "./pages/SearchComp";
+import EventComp from "./pages/EventComp";
+import InfoComp from "./pages/InfoComp";
+import EduComp from "./pages/EduComp";
+import HomeComp from "./pages/HomeComp";
+import SeatInfoComp from "./pages/info/SeatInfoComp";
+import OperatingHoursComp from "./pages/info/OperatingHoursComp";
+import MemberGuideComp from "./pages/info/MemberGuideComp";
+import MaterialGuideComp from "./pages/info/MaterialGuideComp";
+import SeoulLibraryComp from "./pages/info/SeoulLibraryComp";
 
 function App() {
   const [isInfoDropdownOpen, setIsInfoDropdownOpen] = useState(false);
@@ -24,12 +24,15 @@ function App() {
               <Link to="/">Home</Link>
             </li>
             <li>
-              <Link to="/search">room</Link>
+              <Link to="/search">검색</Link>
             </li>
             <li>
-              <Link to="/event">equip</Link>
+              <Link to="/event">일정</Link>
             </li>
-            <li
+            <li>
+              <Link to="/info">정보</Link>
+            </li>
+            {/* <li
               className="relative"
               onMouseEnter={() => setIsInfoDropdownOpen(true)}
               onMouseLeave={() => setIsInfoDropdownOpen(false)}
@@ -89,9 +92,9 @@ function App() {
                   </Link>
                 </div>
               )}
-            </li>
+            </li> */}
             <li>
-              <Link to="/edu">edu</Link>
+              <Link to="/edu">교육</Link>
             </li>
           </ul>
         </nav>
