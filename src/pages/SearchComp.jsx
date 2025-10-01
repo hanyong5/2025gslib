@@ -34,7 +34,23 @@ function SearchComp() {
         throw new Error("검색 요청에 실패했습니다.");
       }
 
+      // 응답이 JSON인지 확인
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("서버에서 JSON 형식이 아닌 응답을 받았습니다.");
+      }
+
       const data = await response.json();
+
+      // 응답 데이터 유효성 검사
+      if (!data || typeof data !== "object") {
+        throw new Error("잘못된 데이터 형식입니다.");
+      }
+
+      if (!data.books || !Array.isArray(data.books)) {
+        throw new Error("도서 데이터를 찾을 수 없습니다.");
+      }
+
       setSearchResults(data);
       setCurrentPage(pageNum);
 
@@ -46,7 +62,17 @@ function SearchComp() {
         }, 100);
       }
     } catch (err) {
-      setError(err.message);
+      let errorMessage = "검색 중 오류가 발생했습니다.";
+
+      if (err instanceof SyntaxError && err.message.includes("JSON")) {
+        errorMessage =
+          "서버 응답 형식이 올바르지 않습니다. 잠시 후 다시 시도해주세요.";
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      console.error("검색 에러:", err);
+      setError(errorMessage);
       setSearchResults(null);
     } finally {
       setIsLoading(false);
