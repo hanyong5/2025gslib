@@ -23,7 +23,8 @@ export default defineConfig({
     },
     // 안드로이드 웹뷰 호환성을 위한 설정
     target: "es2015",
-    minify: "terser",
+    // minify: "terser",
+    minify: "esbuild", // ✅ 기본값으로 지정
     terserOptions: {
       compress: {
         drop_console: true,

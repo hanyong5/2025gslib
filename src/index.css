@@ -38,7 +38,8 @@ body {
   left: -45px;
   width: 40px;
   height: 40px;
-  background-image: url(../images/icon01.png);
+  /* background-image: url(../images/icon01.png); */
+  background-color: #fdfdfd;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
