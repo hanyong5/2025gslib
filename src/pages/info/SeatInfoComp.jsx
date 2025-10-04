@@ -15,7 +15,7 @@ function SeatInfoComp() {
         <div style={{ width: "100%", height: "300px" }}>
           111
           <iframe
-            src="http://gslib-seat.sen.go.kr/domian5.php"
+            src="http://gslib-seat.sen.go.kr/MAPTEMP/3_121.132.43.2.html"
             style={{ width: "100%", height: "300px", border: "none" }}
             title="열람실 실시간 좌석 정보"
             allowFullScreen
