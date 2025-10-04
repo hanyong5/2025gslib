@@ -12,10 +12,10 @@ function SeatInfoComp() {
           width, height를 100%로 지정하고, border를 없앱니다.
           부모 컨테이너가 충분한 높이를 가지도록 min-h-screen을 추가하는 것도 고려할 수 있습니다.
         */}
-        <div style={{ width: "100%", height: "70vh" }}>
+        <div style={{ width: "100%", height: "500px" }}>
           <iframe
             src="http://gslib-seat.sen.go.kr/domian5.php"
-            style={{ width: "100%", height: "100%", border: "none" }}
+            style={{ width: "100%", height: "500px", border: "none" }}
             title="열람실 실시간 좌석 정보"
             allowFullScreen
           ></iframe>
