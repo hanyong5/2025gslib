@@ -15,19 +15,14 @@ function SeatInfoComp() {
         <div
           style={{
             width: "100%",
-            height: "800px",
-            overflow: "hidden",
-            transform: "scale(1.5)",
-            transformOrigin: "0 0",
+            height: "500px",
+            padding: "30px",
+            transform: "scale(1.2)",
           }}
         >
           <iframe
             src="http://gslib-seat.sen.go.kr/domian5.php"
-            style={{
-              width: "100%",
-              height: "800px",
-              border: "none",
-            }}
+            style={{ width: "100%", height: "440px", border: "none" }}
             title="열람실 실시간 좌석 정보"
             allowFullScreen
           ></iframe>
