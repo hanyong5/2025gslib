@@ -18,20 +18,22 @@ exports.handler = async (event, context) => {
 
   try {
     // 쿼리 파라미터 추출
-    const { strDate } = event.queryStringParameters || {};
+    const { url, type } = event.queryStringParameters || {};
 
-    if (!strDate) {
+    if (!url || !type) {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ error: "strDate 파라미터가 필요합니다." }),
+        body: JSON.stringify({ error: "url과 type 파라미터가 필요합니다." }),
       };
     }
 
     // 외부 API 호출
-    const apiUrl = `http://101.55.20.4:8000/api/kangseo_library/get_sche?strDate=${strDate}`;
+    const apiUrl = `http://101.55.20.4:8000/api/kangseo_library/get_sche_detail_info?url=${encodeURIComponent(
+      url
+    )}&type=${type}`;
 
-    console.log(`Fetching events for date: ${strDate}, URL: ${apiUrl}`);
+    console.log(`Fetching event detail for URL: ${url}, Type: ${type}`);
 
     const response = await fetch(apiUrl);
 

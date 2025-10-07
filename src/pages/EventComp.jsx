@@ -58,16 +58,14 @@ function EventComp() {
     // API에서 일정 데이터 가져오기
     const fetchEventsForDate = async (date) => {
       const dateStr = date.toISOString().split("T")[0].replace(/-/g, "");
-      const apiUrl = `/api/kangseo_library/get_sche?strDate=${dateStr}`;
+
+      // Netlify Functions를 사용하여 API 호출
+      const apiUrl = `/.netlify/functions/event-search?strDate=${dateStr}`;
 
       console.log(`Fetching events for date: ${dateStr}, URL: ${apiUrl}`);
 
       try {
-        // Vite 프록시를 통해 API 호출
-        const proxyUrl = `/api/kangseo_library/get_sche?strDate=${dateStr}`;
-        console.log(`Using proxy URL: ${proxyUrl}`);
-
-        const response = await axios.get(proxyUrl);
+        const response = await axios.get(apiUrl);
         console.log(`Raw response for ${dateStr}:`, response.data);
 
         // axios는 자동으로 JSON 파싱을 수행하지만,
@@ -138,19 +136,16 @@ function EventComp() {
     const type = typeMap[rawType] ?? rawType; // 'e' | 'm' | 'r' | 그 외 그대로
 
     try {
-      const response = await axios.get(
-        "/api/kangseo_library/get_sche_detail_info",
-        {
-          // 2) 여기서는 'url'을 절대 직접 인코딩하지 마세요!
-          params: {
-            url: rawUrl, // axios가 자동 인코딩
-            type: type,
-          },
-          // (선택) 네트워크 안전장치
-          timeout: 10000,
-          validateStatus: (status) => status >= 200 && status < 500,
-        }
-      );
+      // Netlify Functions를 사용하여 API 호출
+      const apiUrl = `/.netlify/functions/event-detail?url=${encodeURIComponent(
+        rawUrl
+      )}&type=${type}`;
+
+      const response = await axios.get(apiUrl, {
+        // (선택) 네트워크 안전장치
+        timeout: 10000,
+        validateStatus: (status) => status >= 200 && status < 500,
+      });
 
       console.log("Detail response:", response.data);
 
@@ -273,7 +268,7 @@ function EventComp() {
 
   // 주간이 변경될 때마다 데이터 로드
   useEffect(() => {
-  const weekDates = getWeekDates(currentWeek);
+    const weekDates = getWeekDates(currentWeek);
     loadWeekEvents(weekDates);
   }, [currentWeek, loadWeekEvents]);
 
@@ -385,36 +380,36 @@ function EventComp() {
 
       {/* 주간 달력 */}
       {!loading && (
-      <div className="grid grid-cols-7 gap-4 mb-8">
+        <div className="grid grid-cols-7 gap-4 mb-8">
           {getWeekDates(currentWeek).map((date, index) => {
-          const dateKey = date.toISOString().split("T")[0];
+            const dateKey = date.toISOString().split("T")[0];
             const events = eventsData[dateKey] || [];
 
-          return (
-            <div
-              key={index}
+            return (
+              <div
+                key={index}
                 className={`bg-white border-2 rounded-lg p-4 min-h-[250px] ${
                   isToday(date)
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-200"
-              }`}
-            >
-              {/* 날짜 헤더 */}
-              <div className="text-center mb-4">
-                <div
-                  className={`text-sm font-medium ${
-                    isToday(date) ? "text-blue-600" : "text-gray-600"
-                  }`}
-                >
-                  {formatDay(date)}
-                </div>
-                <div
-                  className={`text-lg font-bold ${
-                    isToday(date) ? "text-blue-800" : "text-gray-800"
-                  }`}
-                >
-                  {date.getDate()}
-                </div>
+                }`}
+              >
+                {/* 날짜 헤더 */}
+                <div className="text-center mb-4">
+                  <div
+                    className={`text-sm font-medium ${
+                      isToday(date) ? "text-blue-600" : "text-gray-600"
+                    }`}
+                  >
+                    {formatDay(date)}
+                  </div>
+                  <div
+                    className={`text-lg font-bold ${
+                      isToday(date) ? "text-blue-800" : "text-gray-800"
+                    }`}
+                  >
+                    {date.getDate()}
+                  </div>
                   {/* 날짜별 일정 요약 */}
                   {events.length > 0 && (
                     <div className="mt-2 space-y-1">
@@ -446,56 +441,56 @@ function EventComp() {
                       </div>
                     </div>
                   )}
-              </div>
+                </div>
 
-              {/* 일정 목록 */}
-              <div className="space-y-2">
-                {events.length > 0 ? (
-                  events.map((event, eventIndex) => (
-                    <div
-                      key={eventIndex}
+                {/* 일정 목록 */}
+                <div className="space-y-2">
+                  {events.length > 0 ? (
+                    events.map((event, eventIndex) => (
+                      <div
+                        key={eventIndex}
                         className={`p-2 rounded text-xs cursor-pointer hover:opacity-80 transition-opacity ${
-                        event.type === "event"
-                          ? "bg-green-100 text-green-800"
-                          : event.type === "movie"
-                          ? "bg-red-100 text-red-800"
+                          event.type === "event"
+                            ? "bg-green-100 text-green-800"
+                            : event.type === "movie"
+                            ? "bg-red-100 text-red-800"
                             : event.type === "holiday"
                             ? "bg-orange-100 text-orange-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
+                            : "bg-gray-100 text-gray-800"
+                        }`}
                         onClick={() => openModal(event)}
-                    >
-                      <div className="font-medium">{event.time}</div>
-                      <div className="text-xs">{event.title}</div>
+                      >
+                        <div className="font-medium">{event.time}</div>
+                        <div className="text-xs">{event.title}</div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-gray-400 text-xs text-center py-4">
+                      일정 없음
                     </div>
-                  ))
-                ) : (
-                  <div className="text-gray-400 text-xs text-center py-4">
-                    일정 없음
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
       )}
 
       {/* 범례 */}
       {!loading && (
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="text-lg font-semibold mb-3">일정 범례</h3>
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h3 className="text-lg font-semibold mb-3">일정 범례</h3>
           <div className="grid grid-cols-3 gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-green-100 rounded"></div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-green-100 rounded"></div>
               <span>교육/강좌 (e)</span>
-          </div>
-          <div className="flex items-center gap-2">
+            </div>
+            <div className="flex items-center gap-2">
               <div className="w-4 h-4 bg-red-100 rounded"></div>
               <span>영화/시청각 (m)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-orange-100 rounded"></div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-orange-100 rounded"></div>
               <span>휴관일 (r)</span>
             </div>
           </div>
@@ -695,15 +690,15 @@ function EventComp() {
                       원본 사이트에서 더 자세한 정보를 확인해보세요.
                     </p>
                   </div>
-          </div>
+                </div>
               )}
-          </div>
+            </div>
 
             {/* 모달 푸터 */}
             <div className="flex justify-between items-center p-6 border-t bg-gray-50">
               <div className="text-sm text-gray-500">
                 강서도서관 프로그램 안내
-          </div>
+              </div>
               <div className="flex gap-3">
                 <button
                   onClick={closeModal}
@@ -721,9 +716,9 @@ function EventComp() {
                     원본 보기
                   </a>
                 )}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
         </div>
       )}
     </div>

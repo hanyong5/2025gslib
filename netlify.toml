@@ -4,7 +4,17 @@
 
 # API 프록시 설정
 [[redirects]]
-  from = "/api/*"
+  from = "/api/kangseo_library/get_sche"
+  to = "/.netlify/functions/event-search"
+  status = 200
+
+[[redirects]]
+  from = "/api/kangseo_library/get_sche_detail_info"
+  to = "/.netlify/functions/event-detail"
+  status = 200
+
+[[redirects]]
+  from = "/api/keyword_book_search"
   to = "/.netlify/functions/book-search"
   status = 200
 
