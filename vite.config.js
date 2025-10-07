@@ -40,7 +40,7 @@ export default defineConfig({
         target: "http://101.55.20.4:8000",
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, ""),
+        rewrite: (path) => path.replace(/^\/api/, "/api"),
         configure: (proxy, options) => {
           proxy.on("error", (err, req, res) => {
             console.log("프록시 에러:", err);
