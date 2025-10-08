@@ -8,7 +8,6 @@ function EventComp() {
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalData, setModalData] = useState(null);
-  const [modalLoading, setModalLoading] = useState(false);
 
   // 주간 달력 데이터 생성
   const getWeekDates = (date) => {
@@ -59,10 +58,20 @@ function EventComp() {
     const fetchEventsForDate = async (date) => {
       const dateStr = date.toISOString().split("T")[0].replace(/-/g, "");
 
-      // Netlify Functions를 사용하여 API 호출
-      const apiUrl = `/.netlify/functions/event-search?strDate=${dateStr}`;
+      // 환경에 따른 API URL 설정
+      const isProduction = import.meta.env.PROD;
+      let apiUrl;
+
+      if (isProduction) {
+        // 프로덕션: Netlify Functions 사용
+        apiUrl = `/.netlify/functions/event-search?strDate=${dateStr}`;
+      } else {
+        // 개발: Vite 프록시 사용
+        apiUrl = `/api/kangseo_library/get_sche?strDate=${dateStr}`;
+      }
 
       console.log(`Fetching events for date: ${dateStr}, URL: ${apiUrl}`);
+      console.log("현재 환경:", isProduction ? "프로덕션" : "개발");
 
       try {
         const response = await axios.get(apiUrl);
@@ -113,8 +122,7 @@ function EventComp() {
               : event.type === "r"
               ? "holiday"
               : "other",
-          url: event.url,
-          time: "시간 미정", // API에서 시간 정보가 없으므로 기본값 설정
+          url: event.url, // API에서 시간 정보가 없으므로 기본값 설정
         }));
       });
 
@@ -129,17 +137,26 @@ function EventComp() {
   }, []);
 
   const fetchEventDetail = async (rawUrl, rawType) => {
-    setModalLoading(true);
-
     // 1) type 매핑 (이미 e/m/r가 들어오면 그대로 사용)
     const typeMap = { event: "e", movie: "m", holiday: "r" };
     const type = typeMap[rawType] ?? rawType; // 'e' | 'm' | 'r' | 그 외 그대로
 
     try {
-      // Netlify Functions를 사용하여 API 호출
-      const apiUrl = `/.netlify/functions/event-detail?url=${encodeURIComponent(
-        rawUrl
-      )}&type=${type}`;
+      // 환경에 따른 API URL 설정
+      const isProduction = import.meta.env.PROD;
+      let apiUrl;
+
+      if (isProduction) {
+        // 프로덕션: Netlify Functions 사용
+        apiUrl = `/.netlify/functions/event-detail?url=${encodeURIComponent(
+          rawUrl
+        )}&type=${type}`;
+      } else {
+        // 개발: Vite 프록시 사용
+        apiUrl = `/api/kangseo_library/get_sche_detail_info?url=${encodeURIComponent(
+          rawUrl
+        )}&type=${type}`;
+      }
 
       const response = await axios.get(apiUrl, {
         // (선택) 네트워크 안전장치
@@ -215,8 +232,6 @@ function EventComp() {
           descHtml: null,
         },
       };
-    } finally {
-      setModalLoading(false);
     }
   };
 
@@ -228,18 +243,28 @@ function EventComp() {
       return;
     }
 
-    setModalOpen(true);
-    setModalData(null);
+    // 기본 데이터로 즉시 모달 열기
+    const initialData = {
+      type: event.type,
+      content: {
+        title: event.title,
+      },
+      originalUrl: event.url,
+    };
 
+    setModalData(initialData);
+    setModalOpen(true);
+
+    // 백그라운드에서 상세 정보 로드
     console.log("Fetching detail for:", event.url, event.type);
     const detailData = await fetchEventDetail(event.url, event.type);
     console.log("Detail data received:", detailData);
 
-    // 원본 URL 추가
+    // 상세 데이터가 있으면 업데이트
     if (detailData) {
       detailData.originalUrl = event.url;
+      setModalData(detailData);
     }
-    setModalData(detailData);
     console.log("Modal data set:", detailData);
   };
 
@@ -268,7 +293,7 @@ function EventComp() {
 
   // 주간이 변경될 때마다 데이터 로드
   useEffect(() => {
-  const weekDates = getWeekDates(currentWeek);
+    const weekDates = getWeekDates(currentWeek);
     loadWeekEvents(weekDates);
   }, [currentWeek, loadWeekEvents]);
 
@@ -295,12 +320,33 @@ function EventComp() {
 
   return (
     <div className="container m-auto px-6">
-      <h1 className="text-[56px] font-bold mb-8">도서관 주간일정</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-[56px] font-bold ">도서관 주간일정</h1>
+        <div className="">
+          <div className="flex items-center gap-2 justify-end">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-green-300 rounded"></div>
+              <span>교육/강좌</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-red-300 rounded"></div>
+              <span>영화/시청각</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-orange-300 rounded"></div>
+              <span>휴관일</span>
+            </div>
+          </div>
+          <div className="text-gray-500">
+            * 일정을 클릭하면 상세 정보를 확인할 수 있습니다.
+          </div>
+        </div>
+      </div>
 
       {/* 로딩 상태 */}
       {loading && (
         <div className="text-center py-8">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
           <p className="mt-2 text-gray-600">일정을 불러오는 중...</p>
         </div>
       )}
@@ -313,7 +359,7 @@ function EventComp() {
       )}
 
       {/* 주간 네비게이션 */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-3 flex items-center justify-between  text-2xl">
         <button
           onClick={goToPreviousWeek}
           className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
@@ -321,8 +367,8 @@ function EventComp() {
           ← 이전 주
         </button>
 
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold">
+        <div className="text-center flex items-center gap-5">
+          <h2 className="text-3xl font-semibold">
             {(() => {
               const weekDates = getWeekDates(currentWeek);
               const startMonth = weekDates[0].getMonth();
@@ -362,7 +408,7 @@ function EventComp() {
           </p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 text-2xl">
           <button
             onClick={goToCurrentWeek}
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
@@ -380,147 +426,116 @@ function EventComp() {
 
       {/* 주간 달력 */}
       {!loading && (
-      <div className="grid grid-cols-7 gap-4 mb-8">
+        <div className="grid grid-cols-7 gap-4 mb-8 ">
           {getWeekDates(currentWeek).map((date, index) => {
-          const dateKey = date.toISOString().split("T")[0];
+            const dateKey = date.toISOString().split("T")[0];
             const events = eventsData[dateKey] || [];
 
-          return (
-            <div
-              key={index}
-                className={`bg-white border-2 rounded-lg p-4 min-h-[250px] ${
+            return (
+              <div
+                key={index}
+                className={`bg-white border-3 rounded-lg p-4 min-h-[250px] ${
                   isToday(date)
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-200"
-              }`}
-            >
-              {/* 날짜 헤더 */}
-              <div className="text-center mb-4">
-                <div
-                  className={`text-sm font-medium ${
-                    isToday(date) ? "text-blue-600" : "text-gray-600"
-                  }`}
-                >
-                  {formatDay(date)}
-                </div>
-                <div
-                  className={`text-lg font-bold ${
-                    isToday(date) ? "text-blue-800" : "text-gray-800"
-                  }`}
-                >
-                  {date.getDate()}
-                </div>
+                }`}
+              >
+                {/* 날짜 헤더 */}
+                <div className="text-center mb-4  text-2xl">
+                  <div
+                    className={` font-medium ${
+                      isToday(date) ? "text-blue-600" : "text-gray-600"
+                    }`}
+                  >
+                    {formatDay(date)}
+                  </div>
+                  <div
+                    className={`font-bold ${
+                      isToday(date) ? "text-blue-800" : "text-gray-800"
+                    }`}
+                  >
+                    {date.getDate()}
+                  </div>
                   {/* 날짜별 일정 요약 */}
                   {events.length > 0 && (
                     <div className="mt-2 space-y-1">
                       <div className="text-xs text-gray-500">
                         {events.length}개 일정
                       </div>
-                      {/* 일정 타입별 아이콘 표시 */}
-                      <div className="flex justify-center gap-1">
-                        {events.slice(0, 3).map((event, idx) => (
-                          <div
-                            key={idx}
-                            className={`w-2 h-2 rounded-full ${
-                              event.type === "event"
-                                ? "bg-green-500"
-                                : event.type === "movie"
-                                ? "bg-red-500"
-                                : event.type === "holiday"
-                                ? "bg-orange-500"
-                                : "bg-gray-500"
-                            }`}
-                            title={event.title}
-                          />
-                        ))}
-                        {events.length > 3 && (
-                          <div className="text-xs text-gray-400">
-                            +{events.length - 3}
-                          </div>
-                        )}
-                      </div>
                     </div>
                   )}
-              </div>
+                </div>
 
-              {/* 일정 목록 */}
-              <div className="space-y-2">
-                {events.length > 0 ? (
-                  events.map((event, eventIndex) => (
-                    <div
-                      key={eventIndex}
+                {/* 일정 목록 */}
+                <div className="space-y-2">
+                  {events.length > 0 ? (
+                    events.map((event, eventIndex) => (
+                      <div
+                        key={eventIndex}
                         className={`p-2 rounded text-xs cursor-pointer hover:opacity-80 transition-opacity ${
-                        event.type === "event"
-                          ? "bg-green-100 text-green-800"
-                          : event.type === "movie"
-                          ? "bg-red-100 text-red-800"
+                          event.type === "event"
+                            ? "bg-green-100 text-green-800"
+                            : event.type === "movie"
+                            ? "bg-red-100 text-red-800"
                             : event.type === "holiday"
                             ? "bg-orange-100 text-orange-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
+                            : "bg-gray-100 text-gray-800"
+                        }`}
                         onClick={() => openModal(event)}
-                    >
-                      <div className="font-medium">{event.time}</div>
-                      <div className="text-xs">{event.title}</div>
+                      >
+                        {/* <div className="font-medium">{event.time}</div> */}
+                        <div className="text-lg">
+                          {event.type == "movie" ? "[영화] " : ""}
+                          {event.title}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-gray-400 text-xs text-center py-4">
+                      일정 없음
                     </div>
-                  ))
-                ) : (
-                  <div className="text-gray-400 text-xs text-center py-4">
-                    일정 없음
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
-      )}
-
-      {/* 범례 */}
-      {!loading && (
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="text-lg font-semibold mb-3">일정 범례</h3>
-          <div className="grid grid-cols-3 gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-green-100 rounded"></div>
-              <span>교육/강좌 (e)</span>
-          </div>
-          <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-red-100 rounded"></div>
-              <span>영화/시청각 (m)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-orange-100 rounded"></div>
-              <span>휴관일 (r)</span>
-            </div>
-          </div>
-          <p className="text-xs text-gray-500 mt-2">
-            * 일정을 클릭하면 상세 정보를 확인할 수 있습니다.
-          </p>
+            );
+          })}
         </div>
       )}
 
       {/* 상세보기 모달 */}
       {modalOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4"
-          style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}
+          className="fixed inset-0 bg-black flex items-center justify-center z-50 p-6"
           onClick={closeModal}
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         >
           <div
-            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden"
-            style={{ position: "relative", zIndex: 10000 }}
+            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full overflow-hidden p-6"
             onClick={(e) => e.stopPropagation()}
           >
             {/* 모달 헤더 */}
-            <div className="flex justify-between items-center p-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
-              <div>
-                <h3 className="text-2xl font-bold text-gray-800">
-                  일정 상세 정보
-                </h3>
-                <p className="text-sm text-gray-600 mt-1">
-                  강서도서관 프로그램 안내
-                </p>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <h3 className="text-3xl font-bold">일정 상세 정보</h3>
+                <span
+                  className={`inline-flex px-6 py-2 rounded-full text-xl font-medium ${
+                    modalData.type === "e"
+                      ? "bg-green-100 text-green-800"
+                      : modalData.type === "m"
+                      ? "bg-red-100 text-red-800"
+                      : modalData.type === "r"
+                      ? "bg-orange-100 text-orange-800"
+                      : "bg-gray-100 text-gray-800"
+                  }`}
+                >
+                  {modalData.type === "e"
+                    ? "교육/강좌"
+                    : modalData.type === "m"
+                    ? "영화/시청각"
+                    : modalData.type === "r"
+                    ? "휴관일"
+                    : "기타"}
+                </span>
               </div>
               <button
                 onClick={closeModal}
@@ -543,124 +558,96 @@ function EventComp() {
             </div>
 
             {/* 모달 내용 */}
-            <div className="p-6 overflow-y-auto max-h-[calc(95vh-140px)]">
-              {modalLoading ? (
-                <div className="text-center py-12">
-                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
-                  <p className="mt-4 text-gray-600 text-lg">
-                    상세 정보를 불러오는 중...
-                  </p>
-                </div>
-              ) : modalData ? (
-                <div>
-                  <div className="mb-4 p-4 bg-green-50 rounded-lg">
-                    <h4 className="font-semibold text-green-800">
-                      모달이 정상적으로 열렸습니다!
-                    </h4>
-                    <p className="text-sm text-green-600">
-                      데이터: {JSON.stringify(modalData, null, 2)}
-                    </p>
+            <div className="p-4 overflow-y-auto max-h-[calc(90vh-140px)]">
+              {modalData && modalData.content ? (
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 ">
+                  {/* 프로그램 상태 */}
+                  <div className="lg:col-span-2 ">
+                    <div className="bg-gray-50 rounded-lg">
+                      <div>
+                        <img
+                          src={modalData.content.image}
+                          alt=""
+                          className=" object-cover rounded-lg"
+                          style={{ height: "500px" }}
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-y-6">
+
+                  {/* 프로그램 정보 */}
+                  <div className="lg:col-span-2 space-y-6">
                     {/* 기본 정보 */}
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                        <svg
-                          className="w-5 h-5 mr-2 text-blue-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        기본 정보
-                      </h4>
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        {/* 제목 */}
-                        <div className="lg:col-span-2">
-                          <label className="block text-sm font-semibold text-gray-600 mb-2">
-                            제목
+
+                    <div className="bg-gray-50 rounded-lg">
+                      <div className="space-y-2">
+                        <div>
+                          <label className="block text-sm text-gray-600">
+                            프로그램명
                           </label>
-                          <p className="text-lg font-medium text-gray-900 bg-white p-3 rounded-lg border">
+                          <p className="text-2xl font-bold text-gray-900 bg-white p-3 rounded-lg">
                             {modalData.content?.title || "정보 없음"}
                           </p>
                         </div>
-
-                        {/* 타입 */}
-                        <div>
-                          <label className="block text-sm font-semibold text-gray-600 mb-2">
-                            프로그램 유형
-                          </label>
-                          <span
-                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                              modalData.type === "e"
-                                ? "bg-green-100 text-green-800"
-                                : modalData.type === "m"
-                                ? "bg-red-100 text-red-800"
-                                : modalData.type === "r"
-                                ? "bg-orange-100 text-orange-800"
-                                : "bg-gray-100 text-gray-800"
-                            }`}
-                          >
-                            {modalData.type === "e"
-                              ? "교육/강좌"
-                              : modalData.type === "m"
-                              ? "영화/시청각"
-                              : modalData.type === "r"
-                              ? "휴관일"
-                              : "기타"}
-                          </span>
-                        </div>
+                        {modalData.content?.period &&
+                          modalData.content.period !== null &&
+                          typeof modalData.content.period === "string" && (
+                            <div>
+                              <label className="block text-sm text-gray-600">
+                                기간
+                              </label>
+                              <p className="text-gray-900 bg-white p-3 rounded-lg">
+                                {modalData.content.period}
+                              </p>
+                            </div>
+                          )}
+                        {modalData.content?.time &&
+                          modalData.content.time !== null &&
+                          typeof modalData.content.time === "string" && (
+                            <div>
+                              <label className="block text-sm text-gray-600">
+                                시간
+                              </label>
+                              <p className="text-gray-900 bg-white p-3 rounded-lg">
+                                {modalData.content.time}
+                              </p>
+                            </div>
+                          )}
+                        {modalData.content?.place &&
+                          modalData.content.place !== null &&
+                          typeof modalData.content.place === "string" && (
+                            <div>
+                              <label className="block text-sm text-gray-600">
+                                장소
+                              </label>
+                              <p className="text-gray-900 bg-white p-3 rounded-lg">
+                                {modalData.content.place}
+                              </p>
+                            </div>
+                          )}
+                        {modalData.content?.target &&
+                          modalData.content.target !== null &&
+                          typeof modalData.content.target === "string" && (
+                            <div>
+                              <label className="block text-sm text-gray-600">
+                                대상
+                              </label>
+                              <p className="text-gray-900 bg-white p-3 rounded-lg">
+                                {modalData.content.target}
+                              </p>
+                            </div>
+                          )}
+                        {/* {modalData.originalUrl && (
+                          <div>
+                            <label className="block text-sm text-gray-600">
+                              자세한 정보
+                            </label>
+                            <pre className="bg-gray-100 rounded-lg p-3 text-sm overflow-x-auto whitespace-pre-wrap">
+                              {JSON.stringify(modalData.content, null, 2)}
+                            </pre>
+                          </div>
+                        )} */}
                       </div>
-                    </div>
-
-                    {/* 원본 링크 */}
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
-                      <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                        <svg
-                          className="w-5 h-5 mr-2 text-blue-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                          />
-                        </svg>
-                        🔗 원본 링크
-                      </h4>
-                      <p className="text-gray-600 mb-3">
-                        더 자세한 정보는 원본 사이트에서 확인하세요.
-                      </p>
-                      <a
-                        href={modalData.originalUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-                      >
-                        <svg
-                          className="w-4 h-4 mr-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                          />
-                        </svg>
-                        상세 정보 보기
-                      </a>
                     </div>
                   </div>
                 </div>
@@ -690,35 +677,20 @@ function EventComp() {
                       원본 사이트에서 더 자세한 정보를 확인해보세요.
                     </p>
                   </div>
-          </div>
+                </div>
               )}
-          </div>
+            </div>
 
             {/* 모달 푸터 */}
-            <div className="flex justify-between items-center p-6 border-t bg-gray-50">
-              <div className="text-sm text-gray-500">
-                강서도서관 프로그램 안내
+            <div className="flex justify-end items-center">
+              <button
+                onClick={closeModal}
+                className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200"
+              >
+                닫기
+              </button>
+            </div>
           </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={closeModal}
-                  className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200"
-                >
-                  닫기
-                </button>
-                {modalData?.originalUrl && (
-                  <a
-                    href={modalData.originalUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-                  >
-                    원본 보기
-                  </a>
-                )}
-          </div>
-        </div>
-      </div>
         </div>
       )}
     </div>

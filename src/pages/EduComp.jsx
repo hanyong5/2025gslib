@@ -89,10 +89,31 @@ function EduComp() {
 
   return (
     <div className="container m-auto px-6">
-      <h1 className="text-[56px] font-bold mb-8">교육일정안내</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-[56px] font-bold">교육일정안내</h1>
+        {/* <div className="">
+          <div className="flex items-center gap-2 justify-end">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-green-300 rounded"></div>
+              <span>특별행사</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-blue-300 rounded"></div>
+              <span>교육강좌</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-yellow-300 rounded"></div>
+              <span>어린이 프로그램</span>
+            </div>
+          </div>
+          <div className="text-gray-500">
+            * 일정을 클릭하면 상세 정보를 확인할 수 있습니다.
+          </div>
+        </div> */}
+      </div>
 
       {/* 주간 네비게이션 */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-3 flex items-center justify-between text-2xl">
         <button
           onClick={goToPreviousWeek}
           className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
@@ -100,8 +121,8 @@ function EduComp() {
           ← 이전 주
         </button>
 
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold">
+        <div className="text-center flex items-center gap-5">
+          <h2 className="text-3xl font-semibold">
             {(() => {
               const startMonth = weekDates[0].getMonth();
               const endMonth = weekDates[6].getMonth();
@@ -135,7 +156,7 @@ function EduComp() {
           </p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 text-2xl">
           <button
             onClick={goToCurrentWeek}
             className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
@@ -160,26 +181,34 @@ function EduComp() {
           return (
             <div
               key={index}
-              className={`bg-white border-2 rounded-lg p-4 min-h-[200px] ${
+              className={`bg-white border-3 rounded-lg p-4 min-h-[400px] ${
                 isToday(date) ? "border-blue-500 bg-blue-50" : "border-gray-200"
               }`}
             >
               {/* 날짜 헤더 */}
-              <div className="text-center mb-4">
+              <div className="text-center mb-4 text-2xl">
                 <div
-                  className={`text-sm font-medium ${
+                  className={`font-medium ${
                     isToday(date) ? "text-blue-600" : "text-gray-600"
                   }`}
                 >
                   {formatDay(date)}
                 </div>
                 <div
-                  className={`text-lg font-bold ${
+                  className={`font-bold ${
                     isToday(date) ? "text-blue-800" : "text-gray-800"
                   }`}
                 >
                   {date.getDate()}
                 </div>
+                {/* 날짜별 일정 요약 */}
+                {events.length > 0 && (
+                  <div className="mt-2 space-y-1">
+                    <div className="text-xs text-gray-500">
+                      {events.length}개 일정
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* 일정 목록 */}
@@ -188,7 +217,7 @@ function EduComp() {
                   events.map((event, eventIndex) => (
                     <div
                       key={eventIndex}
-                      className={`p-2 rounded text-xs ${
+                      className={`p-2 rounded text-xs cursor-pointer hover:opacity-80 transition-opacity ${
                         event.type === "event"
                           ? "bg-green-100 text-green-800"
                           : event.type === "class"
@@ -208,8 +237,8 @@ function EduComp() {
                           : "bg-gray-100 text-gray-800"
                       }`}
                     >
-                      <div className="font-medium">{event.time}</div>
-                      <div className="text-xs">{event.title}</div>
+                      {/* <div className="font-medium">{event.time}</div> */}
+                      <div className="text-lg">{event.title}</div>
                     </div>
                   ))
                 ) : (
@@ -221,45 +250,6 @@ function EduComp() {
             </div>
           );
         })}
-      </div>
-
-      {/* 범례 */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="text-lg font-semibold mb-3">일정 범례</h3>
-        <div className="grid grid-cols-4 gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-green-100 rounded"></div>
-            <span>특별행사</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-blue-100 rounded"></div>
-            <span>교육강좌</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-yellow-100 rounded"></div>
-            <span>어린이 프로그램</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-purple-100 rounded"></div>
-            <span>전시회</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-orange-100 rounded"></div>
-            <span>독서토론회</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-pink-100 rounded"></div>
-            <span>도서관 투어</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-indigo-100 rounded"></div>
-            <span>도서 관련</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-red-100 rounded"></div>
-            <span>영화/시청각</span>
-          </div>
-        </div>
       </div>
     </div>
   );
