@@ -249,7 +249,7 @@ function SearchComp() {
                     {/* 대출 상태 */}
                     <div className="mt-3 items-end flex justify-between">
                       <span
-                        className={`inline-block px-6 py-2 rounded-full text-xl font-medium ${
+                        className={`inline-block px-6 py-2 rounded-full text-lg font-medium ${
                           book.state === "대출가능"
                             ? "bg-green-100 text-green-900"
                             : "bg-red-100 text-red-800"
@@ -259,7 +259,7 @@ function SearchComp() {
                       </span>
                       <button
                         onClick={() => openModal(book)}
-                        className="px-6 py-2 rounded-full text-xl font-medium bg-blue-400 text-white hover:bg-blue-500 transition-colors"
+                        className="px-6 py-2 rounded-full text-lg font-medium bg-blue-400 text-white hover:bg-blue-500 transition-colors"
                       >
                         상세보기
                       </button>
@@ -404,7 +404,7 @@ function SearchComp() {
           style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         >
           <div
-            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full  overflow-hidden p-6"
+            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full  h-full overflow-hidden p-6"
             onClick={(e) => e.stopPropagation()}
           >
             {/* 모달 헤더 */}
