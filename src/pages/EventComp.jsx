@@ -321,7 +321,7 @@ function EventComp() {
   return (
     <div className="container m-auto px-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-[56px] font-bold ">도서관 주간일정</h1>
+        <h1 className="text-[56px] font-bold mb-5">도서관 주간일정</h1>
         <div className="">
           <div className="flex items-center gap-2 justify-end">
             <div className="flex items-center gap-2">
@@ -434,7 +434,7 @@ function EventComp() {
             return (
               <div
                 key={index}
-                className={`bg-white border-3 rounded-lg p-4 min-h-[500px] ${
+                className={`bg-white border-3 rounded-lg p-4 min-h-[550px] ${
                   isToday(date)
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-200"
@@ -510,7 +510,7 @@ function EventComp() {
           style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         >
           <div
-            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full h-[500px] overflow-hidden p-6"
+            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full h-[550px] overflow-hidden p-6"
             onClick={(e) => e.stopPropagation()}
           >
             {/* 모달 헤더 */}

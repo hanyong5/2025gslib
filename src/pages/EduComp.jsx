@@ -90,7 +90,7 @@ function EduComp() {
   return (
     <div className="container m-auto px-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-[56px] font-bold">교육일정안내</h1>
+        <h1 className="text-[56px] font-bold mb-5">교육일정안내</h1>
         {/* <div className="">
           <div className="flex items-center gap-2 justify-end">
             <div className="flex items-center gap-2">
@@ -181,7 +181,7 @@ function EduComp() {
           return (
             <div
               key={index}
-              className={`bg-white border-3 rounded-lg p-4 min-h-[500px] ${
+              className={`bg-white border-3 rounded-lg p-4 min-h-[550px] ${
                 isToday(date) ? "border-blue-500 bg-blue-50" : "border-gray-200"
               }`}
             >

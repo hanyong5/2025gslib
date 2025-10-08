@@ -404,7 +404,7 @@ function SearchComp() {
           style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         >
           <div
-            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full h-[500px] overflow-hidden p-6"
+            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full h-[700px] overflow-hidden p-6"
             onClick={(e) => e.stopPropagation()}
           >
             {/* 모달 헤더 */}
