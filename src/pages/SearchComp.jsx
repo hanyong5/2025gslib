@@ -404,7 +404,7 @@ function SearchComp() {
           style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         >
           <div
-            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full  h-full overflow-hidden p-6"
+            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full h-[500px] overflow-hidden p-6"
             onClick={(e) => e.stopPropagation()}
           >
             {/* 모달 헤더 */}
@@ -433,7 +433,7 @@ function SearchComp() {
             </div>
 
             {/* 모달 내용 */}
-            <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)] ">
+            <div className="p-6 overflow-y-auto h-full ">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* 도서 이미지 */}
                 <div className="lg:col-span-1">

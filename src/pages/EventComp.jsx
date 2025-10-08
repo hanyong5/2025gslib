@@ -434,7 +434,7 @@ function EventComp() {
             return (
               <div
                 key={index}
-                className={`bg-white border-3 rounded-lg p-4 min-h-[250px] ${
+                className={`bg-white border-3 rounded-lg p-4 min-h-[500px] ${
                   isToday(date)
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-200"
@@ -510,7 +510,7 @@ function EventComp() {
           style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         >
           <div
-            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full overflow-hidden p-6"
+            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full h-[500px] overflow-hidden p-6"
             onClick={(e) => e.stopPropagation()}
           >
             {/* 모달 헤더 */}

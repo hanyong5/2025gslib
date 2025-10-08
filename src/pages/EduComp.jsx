@@ -181,7 +181,7 @@ function EduComp() {
           return (
             <div
               key={index}
-              className={`bg-white border-3 rounded-lg p-4 min-h-[400px] ${
+              className={`bg-white border-3 rounded-lg p-4 min-h-[500px] ${
                 isToday(date) ? "border-blue-500 bg-blue-50" : "border-gray-200"
               }`}
             >

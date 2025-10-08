@@ -17,7 +17,7 @@ function SeoulLibraryComp() {
         >
           <iframe
             src="https://e-lib.sen.go.kr/main"
-            style={{ width: "100%", height: "450px", border: "none" }}
+            style={{ width: "100%", height: "500px", border: "none" }}
             allowFullScreen
           ></iframe>
         </div>
