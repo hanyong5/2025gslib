@@ -510,7 +510,7 @@ function EventComp() {
           style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         >
           <div
-            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full h-[550px] overflow-hidden p-6"
+            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full h-[700px] overflow-hidden p-6"
             onClick={(e) => e.stopPropagation()}
           >
             {/* 모달 헤더 */}
@@ -558,7 +558,7 @@ function EventComp() {
             </div>
 
             {/* 모달 내용 */}
-            <div className="p-4 overflow-y-auto max-h-[calc(90vh-140px)]">
+            <div className="p-4 overflow-y-auto  h-full ">
               {modalData && modalData.content ? (
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 ">
                   {/* 프로그램 상태 */}
