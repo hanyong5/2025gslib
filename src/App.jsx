@@ -18,7 +18,7 @@ function App() {
   return (
     <>
       <div className="container-fluid  relative px-6 py-6">
-        <nav className="absolute left-0 z-10 ">
+        <nav className="absolute left-0 z-10 hidden ">
           <ul className="flex justify-center items-center gap-4">
             <li>
               <Link to="/">Home</Link>
@@ -99,19 +99,46 @@ function App() {
           </ul>
         </nav>
         <Routes>
-          <Route path="/" element={<HomeComp />}></Route>
-          <Route path="/search" element={<SearchCamp />}></Route>
-          <Route path="/event" element={<EventComp />}></Route>
-          <Route path="/info" element={<InfoComp />}></Route>
-          <Route path="/info/seat" element={<SeatInfoComp />}></Route>
-          <Route path="/info/hours" element={<OperatingHoursComp />}></Route>
-          <Route path="/info/member" element={<MemberGuideComp />}></Route>
-          <Route path="/info/material" element={<MaterialGuideComp />}></Route>
+          <Route
+            path="/"
+            element={<HomeComp />}
+          ></Route>
+          <Route
+            path="/search"
+            element={<SearchCamp />}
+          ></Route>
+          <Route
+            path="/event"
+            element={<EventComp />}
+          ></Route>
+          <Route
+            path="/info"
+            element={<InfoComp />}
+          ></Route>
+          <Route
+            path="/info/seat"
+            element={<SeatInfoComp />}
+          ></Route>
+          <Route
+            path="/info/hours"
+            element={<OperatingHoursComp />}
+          ></Route>
+          <Route
+            path="/info/member"
+            element={<MemberGuideComp />}
+          ></Route>
+          <Route
+            path="/info/material"
+            element={<MaterialGuideComp />}
+          ></Route>
           <Route
             path="/info/seoul-library"
             element={<SeoulLibraryComp />}
           ></Route>
-          <Route path="/edu" element={<EduComp />}></Route>
+          <Route
+            path="/edu"
+            element={<EduComp />}
+          ></Route>
         </Routes>
       </div>
     </>
